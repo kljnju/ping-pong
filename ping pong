@@ -1,0 +1,67 @@
+#библиотеки
+from pygame import *
+
+#классы
+class GameSprite(sprite.Sprite):
+    def __init__(self, player_image, player_x, player_y, player_speed):
+        sprite.Sprite.__init__(self)
+        self.image = transform.scale(image.load(player_image), (65, 65))
+        self.speed = player_speed
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+    def reset(self):
+        win.blit(self.image, (self.rect.x, self.rect.y))
+
+#класс ракеток
+class Player(GameSprite):
+    def update_l(self):
+        if keys_pressed[K_w] and self.rect.y > 5:
+            self.rect.y -= self.speed
+        if keys_pressed[K_s] and self.rect.y < 395:
+            self.rect.y += self.speed
+    def update_r(self):
+        if keys_pressed[K_UP] and self.rect.y > 5:
+            self.rect.y -= self.speed
+        if keys_pressed[K_DOWN] and self.rect.y < 395:
+            self.rect.y += self.speed
+
+#размеры окна
+win_width = 700
+win_heidht = 500
+
+#создание окна
+win = display.set_mode((win_width, win_heidht))
+display.set_caption('pygame window')
+background = transform.scale(image.load('---'), (win_width, win_heidht))
+
+#создание спрайтов
+racket1 = Player('---.png', 50, 50, 5)
+racket2 = Player('---.png', 650, 50, 5)
+
+#основной цикл
+clock = time.Clock()
+FPS = 60
+run =  True
+while run:
+    for e in event.get():
+        if e.type == QUIT:
+            run = False
+
+    #обновление фона
+    win.blit(background,(0, 0))
+    
+    #передвижение спрайтов
+    rocket1.update_l()
+    rocket2.update_r()
+    
+    #обновление спрайтов
+    rocket1.reset()
+    rocket2.reset()
+
+
+
+
+
+    display.update()
+    clock.tick(FPS)
