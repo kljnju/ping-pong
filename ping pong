@@ -32,36 +32,64 @@ win_heidht = 500
 
 #создание окна
 win = display.set_mode((win_width, win_heidht))
-display.set_caption('pygame window')
-background = transform.scale(image.load('---'), (win_width, win_heidht))
+background = transform.scale(image.load('background.png'), (win_width, win_heidht))
 
 #создание спрайтов
-racket1 = Player('---.png', 50, 50, 5)
-racket2 = Player('---.png', 650, 50, 5)
+racket1 = Player('racket.png', 50, 200, 5)
+racket2 = Player('racket.png', 650, 200, 5)
+ball = GameSprite('ball.png',50, 200, 3)
 
-#основной цикл
+#надписи
+font.init()
+font = font.Font(None, 40)
+lose1 = font3.render('PLAYER 1 LOSE!', 1, (255, 0, 0))
+lose2 = font4.render('PLAYER 2 LOSE!', 1, (0, 255, 0))
+
 clock = time.Clock()
 FPS = 60
 run =  True
+finish = false
+
+speed_x = 3
+speed_y = 3
+
+#основной цикл
 while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
+    if finish != True:
+        ball.rect.x += speed_x
+        ball.rect.x += speed_x
 
-    #обновление фона
-    win.blit(background,(0, 0))
+        #обновление фона
+        win.blit(background,(0, 0))
     
-    #передвижение спрайтов
-    rocket1.update_l()
-    rocket2.update_r()
-    
+        #передвижение спрайтов
+        rocket1.update_l()
+        rocket2.update_r()
+
+    #если мяч достигает верхней или нижней границы, меняется его направление
+    if ball.rect.y > win_height-50 or ball.rect.y < 0:
+        speed_y *= -1:
+
+    #столкновение мяча и ракеток
+    if sprite.collide_rect(racket1, ball) or sprite.collide_rect(racket2, ball):
+        speed_x *= -1
+
+    #условия победы и проигрыша
+    if ball.rect.x < 0:
+        finish = True
+        win.blit(lose1, (200, 200))
+
+    if ball.rect.x < win_wight:
+        finish = True
+        win.blit(lose2, (200, 200))
+
     #обновление спрайтов
     rocket1.reset()
     rocket2.reset()
-
-
-
-
+    ball.reset()
 
     display.update()
     clock.tick(FPS)
